@@ -1,24 +1,53 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import Home from "../views/Home.vue";
-
+import Login from "../views/LoginView.vue";
+import Main from "../views/MainView.vue";
+import Dashboard from "../components/Dashboard";
+import Transaction from "../components/transaction/Transaction";
+import Report from "../components/report/Report";
+import ReportDetail from "../components/report/ReportDetail";
+import AccPeriod from "../components/accounting-period/AccPeriod"
 Vue.use(VueRouter);
 
 const routes = [
   {
-    path: "/",
-    name: "Home",
-    component: Home
+    path: "/login",
+    name: "login",
+    component: Login
   },
   {
-    path: "/about",
-    name: "About",
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () =>
-      import(/* webpackChunkName: "about" */ "../views/About.vue")
+    path: "/main",
+    name: "main",
+    component: Main,
+    children: [
+      {
+        path: "/main/dashboard",
+        name: "dashboard",
+        component: Dashboard
+      },
+      {
+        path: "/main/transaction",
+        name: "transaction",
+        component: Transaction
+      },
+      {
+        path: "/main/report",
+        name: "report",
+        component: Report
+      },
+      {
+        path: "/main/report-detail",
+        name: "reportDetail",
+        component: ReportDetail
+      },
+      {
+        path: "/main/acc-period",
+        name: "accPeriod",
+        component: AccPeriod
+      },
+    ]
   }
+
 ];
 
 const router = new VueRouter({
