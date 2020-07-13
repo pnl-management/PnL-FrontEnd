@@ -1,7 +1,7 @@
 import Vue from "vue";
 import Vuex from "vuex";
 Vue.use(Vuex);
-export default ({
+export default {
   namespaced: true,
   state: {
     user: {
@@ -9,12 +9,12 @@ export default ({
       role: null,
       username: null,
       token: null,
-      brand: null,
+      brand: null
     }
   },
   getters: {
     user(state) {
-      return state.user
+      return state.user;
     }
   },
   mutations: {
@@ -24,15 +24,14 @@ export default ({
   },
   actions: {
     fetchUser({ commit }, user) {
-
       if (user) {
         let currentUser = {
           fullname: user.participant.fullname,
           role: user.participant.role,
           username: user.participant.username,
           token: user.token,
-          brand : user.participant.brand.id
-        }
+          brand: user.participant.brand.id
+        };
         commit("SET_USER", currentUser);
       } else {
         commit("SET_USER", null);
@@ -46,11 +45,10 @@ export default ({
           role: user.role,
           username: user.username,
           token: user.token,
-          brand : user.brand.id
-        }
+          brand: user.brand.id
+        };
         commit("SET_USER", currentUser);
-      } 
-    },
-
+      }
+    }
   }
-});
+};

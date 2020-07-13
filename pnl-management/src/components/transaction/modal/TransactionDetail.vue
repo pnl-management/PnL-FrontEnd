@@ -57,24 +57,33 @@
         </el-form-item>
         <el-form-item label="Đánh giá">
           <el-col>
-            <el-input type="textarea" :rows="5"  placeholder="Đánh giá của kế toán trưởng" v-model="feedback"></el-input>
+            <el-input
+              type="textarea"
+              :rows="5"
+              placeholder="Đánh giá của kế toán trưởng"
+              v-model="feedback"
+            ></el-input>
           </el-col>
         </el-form-item>
-        <el-button type="success"  @click="changeStatusTransaction('approve')">Chấp thuận</el-button>
-        <el-button type="danger" @click="changeStatusTransaction('reject')">Từ chối</el-button>
-        <el-button type="info" @click="changeStatusTransaction('req-modified')">Yêu cầu chỉnh sửa</el-button>
+        <el-button type="success" @click="changeStatusTransaction('approve')"
+          >Chấp thuận</el-button
+        >
+        <el-button type="danger" @click="changeStatusTransaction('reject')"
+          >Từ chối</el-button
+        >
+        <el-button type="info" @click="changeStatusTransaction('req-modified')"
+          >Yêu cầu chỉnh sửa</el-button
+        >
       </el-form>
     </el-main>
   </div>
 </template>
 <script>
-import { mapGetters,mapActions } from "vuex";
-import {
-  changeStatusTransaction
-} from "../../../api/transactionApi";
+import { mapGetters, mapActions } from "vuex";
+import { changeStatusTransaction } from "../../../api/transactionApi";
 import { status } from "../../../enum/TransactionStatusEnum";
 import { type } from "../../../enum/TransactionTypeEnum";
-import EventBus from '../../../EventBus'
+import EventBus from "../../../EventBus";
 export default {
   props: ["id"],
   name: "TransactionDetail",
@@ -88,62 +97,64 @@ export default {
         date: null,
         desc: null,
         value: null,
-        img: null,
+        img: null
       },
-      loading : false,
+      loading: false,
       feedback: null
     };
   },
   computed: {
     ...mapGetters("user", ["user"]),
-    ...mapGetters("transaction", ["transaction"]),
+    ...mapGetters("transaction", ["transaction"])
   },
   methods: {
-    ...mapActions("transaction",["getTransactionDetail"]),
+    ...mapActions("transaction", ["getTransactionDetail"]),
     getDatetime(createDate) {
       let date = Date(createDate);
       return date;
     },
 
     getTransaction() {
-        this.form = {
-          name: this.transaction.name,
-          id: this.transaction.id,
-          type: type.get(this.transaction.type),
-          state: status.get(this.transaction.state).name,
-          date: this.getDatetime(this.transaction.date),
-          desc: this.transaction.desc,
-          value: this.transaction.value,
-          img : this.transaction.img
-        };
-      },
+      this.form = {
+        name: this.transaction.name,
+        id: this.transaction.id,
+        type: type.get(this.transaction.type),
+        state: status.get(this.transaction.state).name,
+        date: this.getDatetime(this.transaction.date),
+        desc: this.transaction.desc,
+        value: this.transaction.value,
+        img: this.transaction.img
+      };
+    },
 
-    changeStatusTransaction(type){
+    changeStatusTransaction(type) {
       var data = {
         type,
-        feedback : this.feedback
-      }
-      changeStatusTransaction(this.user.token,this.id,data).then(response =>{
-        console.log(response)
-        if(response.status == 201){
+        feedback: this.feedback
+      };
+      changeStatusTransaction(this.user.token, this.id, data).then(response => {
+        console.log(response);
+        if (response.status == 201) {
           EventBus.$emit("CloseTransactionDetailDialog", false);
           this.$message({
-              message: "Update thành công",
-              type: "success"
-            });
-        }else{
-         this.$message.error("Tình trạng hiện tại của giao dịch không thể đổi");
+            message: "Update thành công",
+            type: "success"
+          });
+        } else {
+          this.$message.error(
+            "Tình trạng hiện tại của giao dịch không thể đổi"
+          );
         }
-      })
+      });
     }
   },
 
   async created() {
     this.loading = true;
     let data = {
-      idToken : this.user.token,
-      id : this.id
-    }
+      idToken: this.user.token,
+      id: this.id
+    };
     await this.getTransactionDetail(data);
     this.getTransaction();
     this.loading = false;

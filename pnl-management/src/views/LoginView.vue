@@ -66,7 +66,9 @@ export default {
             });
             this.$router.push({ name: "dashboard" });
           } else {
-            this.$message.error("Login không thành công, bạn không phải là kế toán trưởng");
+            this.$message.error(
+              "Login không thành công, bạn không phải là kế toán trưởng"
+            );
             this.fullscreenLoading = false;
           }
         });
@@ -181,4 +183,3 @@ export default {
   padding-bottom: 3px;
 }
 </style>
-

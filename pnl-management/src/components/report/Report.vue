@@ -6,14 +6,32 @@
       </div>
       <div>
         <el-table :data="tableData" :row-class-name="this.tableRowClassName">
-          <el-table-column prop="date" label="Thời gian" width="200px"></el-table-column>
-          <el-table-column prop="name" label="Tên giao dịch" width="350px"></el-table-column>
-          <el-table-column prop="value" label="Số tiền (VNĐ)" width="300px"></el-table-column>
+          <el-table-column
+            prop="date"
+            label="Thời gian"
+            width="200px"
+          ></el-table-column>
+          <el-table-column
+            prop="name"
+            label="Tên giao dịch"
+            width="350px"
+          ></el-table-column>
+          <el-table-column
+            prop="value"
+            label="Số tiền (VNĐ)"
+            width="300px"
+          ></el-table-column>
           <el-table-column label="Chi tiết" width="250px">
-            <el-button type="text" size="small" @click="goToDetail()">Chi tiết</el-button>
+            <el-button type="text" size="small" @click="goToDetail()"
+              >Chi tiết</el-button
+            >
           </el-table-column>
         </el-table>
-        <el-pagination background layout="prev, pager, next" :total="50"></el-pagination>
+        <el-pagination
+          background
+          layout="prev, pager, next"
+          :total="50"
+        ></el-pagination>
       </div>
     </el-main>
   </div>
@@ -47,20 +65,20 @@ export default {
     };
   },
   methods: {
-      tableRowClassName({row}) {
-        let str = row.value;
-        console.log(str);
-        if (str.includes("-")) {
-          return 'danger-row';
-        } else if (str.includes("+")) {
-          return 'success-row';
-        }
-        return '';
-      },
-      
-      goToDetail(){
-          this.$router.replace({name: "reportDetail"})
+    tableRowClassName({ row }) {
+      let str = row.value;
+      console.log(str);
+      if (str.includes("-")) {
+        return "danger-row";
+      } else if (str.includes("+")) {
+        return "success-row";
       }
+      return "";
+    },
+
+    goToDetail() {
+      this.$router.replace({ name: "reportDetail" });
+    }
   }
 };
 </script>
@@ -78,10 +96,10 @@ export default {
   max-width: 500px;
 }
 .el-table .danger-row {
-  background-color: #FEF0F0;
+  background-color: #fef0f0;
 }
 
 .el-table .success-row {
-  background-color: #F0F9EB;
+  background-color: #f0f9eb;
 }
 </style>

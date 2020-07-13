@@ -17,21 +17,56 @@
       <div>
         <el-table :data="listTransaction">
           <!-- <el-table-column prop="id" label="ID" width="50"></el-table-column> -->
-          <el-table-column prop="date" label="Ngày tạo" width="100"></el-table-column>
-          <el-table-column prop="time" label="Giờ tạo" width="90"></el-table-column>
-          <el-table-column prop="store" label="Cửa hàng" width="150"></el-table-column>
-          <el-table-column prop="name" label="Tên giao dịch" width="150"></el-table-column>
-          <el-table-column prop="type" label="Loại giao dịch" width="120"></el-table-column>
-          <el-table-column prop="value" label="Số tiền (VNĐ)" width="120"></el-table-column>
-          <el-table-column prop="creator" label="Người tạo" width="120"></el-table-column>
+          <el-table-column
+            prop="date"
+            label="Ngày tạo"
+            width="100"
+          ></el-table-column>
+          <el-table-column
+            prop="time"
+            label="Giờ tạo"
+            width="90"
+          ></el-table-column>
+          <el-table-column
+            prop="store"
+            label="Cửa hàng"
+            width="150"
+          ></el-table-column>
+          <el-table-column
+            prop="name"
+            label="Tên giao dịch"
+            width="150"
+          ></el-table-column>
+          <el-table-column
+            prop="type"
+            label="Loại giao dịch"
+            width="120"
+          ></el-table-column>
+          <el-table-column
+            prop="value"
+            label="Số tiền (VNĐ)"
+            width="120"
+          ></el-table-column>
+          <el-table-column
+            prop="creator"
+            label="Người tạo"
+            width="120"
+          ></el-table-column>
           <el-table-column label="Chi tiết" width="70">
             <template slot-scope="scope">
-              <el-button type="text" size="small" @click="goToDetail(scope.row.id)">Chi tiết</el-button>
+              <el-button
+                type="text"
+                size="small"
+                @click="goToDetail(scope.row.id)"
+                >Chi tiết</el-button
+              >
             </template>
           </el-table-column>
           <el-table-column label="Trạng thái" width="180">
             <template slot-scope="scope">
-              <el-tag :type="scope.row.color" disable-transitions>{{scope.row.status}}</el-tag>
+              <el-tag :type="scope.row.color" disable-transitions>{{
+                scope.row.status
+              }}</el-tag>
             </template>
           </el-table-column>
         </el-table>
@@ -45,7 +80,7 @@
       </div>
     </el-main>
     <el-dialog title="Chi tiết Giao dịch" :visible.sync="dialogVisible">
-        <transaction-detail v-bind:id="id" v-if="dialogVisible"/>
+      <transaction-detail v-bind:id="id" v-if="dialogVisible" />
     </el-dialog>
   </div>
 </template>
@@ -54,7 +89,7 @@ import { mapGetters, mapActions } from "vuex";
 import { status } from "../../enum/TransactionStatusEnum";
 import { type } from "../../enum/TransactionTypeEnum";
 import TransactionDetail from "./modal/TransactionDetail";
-import EventBus from '../../EventBus';
+import EventBus from "../../EventBus";
 export default {
   components: {
     TransactionDetail
@@ -80,8 +115,8 @@ export default {
         }
       ],
       value: 0,
-      dialogVisible : false,
-      id : 0,
+      dialogVisible: false,
+      id: 0
     };
   },
   computed: {
@@ -181,19 +216,19 @@ export default {
     async getLength() {
       await this.getTransactionLength(this.user.token);
       this.length = this.transactionLength;
-    },
+    }
   },
 
   mounted() {
-      EventBus.$on("CloseTransactionDetailDialog",(value) =>{
+    EventBus.$on("CloseTransactionDetailDialog", value => {
       this.dialogVisible = value;
-    })
+    });
   },
 
   destroyed() {
-    EventBus.$off("CloseTransactionDetailDialog",(value) =>{
+    EventBus.$off("CloseTransactionDetailDialog", value => {
       this.dialogVisible = value;
-    })
+    });
   },
   created() {
     this.getTransactions(0);

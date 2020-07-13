@@ -43,8 +43,12 @@
           </el-col>
         </el-form-item>
 
-        <el-button type="primary" v-if="this.id != 0" @click="updatePeriodById">Lưu</el-button>
-        <el-button type="primary" v-else @click="createNewPeriods">Tạo</el-button>
+        <el-button type="primary" v-if="this.id != 0" @click="updatePeriodById"
+          >Lưu</el-button
+        >
+        <el-button type="primary" v-else @click="createNewPeriods"
+          >Tạo</el-button
+        >
         <el-button type="info">Đóng</el-button>
       </el-form>
     </el-main>
@@ -52,8 +56,12 @@
 </template>
 <script>
 import { mapGetters } from "vuex";
-import { getAccPeriodByID, createPeriod, updatePeriod } from "../../../api/AccPeriodApi";
-import EventBus from '../../../EventBus'
+import {
+  getAccPeriodByID,
+  createPeriod,
+  updatePeriod
+} from "../../../api/AccPeriodApi";
+import EventBus from "../../../EventBus";
 export default {
   props: ["id"],
   name: "AccPeriodDetail",
@@ -69,43 +77,43 @@ export default {
     };
   },
   methods: {
-    createNewPeriods(){
+    createNewPeriods() {
       console.log(this.user);
       let period = {
-        title : this.form.title,
+        title: this.form.title,
         startDate: this.getDateCreate(this.form.startDate),
         endDate: this.getDateCreate(this.form.endDate),
         deadline: this.getDatetimeCreate(this.form.deadline),
-        brandId : this.user.brand
-      }
+        brandId: this.user.brand
+      };
       console.log(period);
       createPeriod(this.user.token, period).then(response => {
-        if(response.status == 200){
+        if (response.status == 200) {
           console.log("ahihi");
         }
-      })
+      });
       EventBus.$emit("CloseAccPeriodDialog", false);
     },
 
-    updatePeriodById(){
+    updatePeriodById() {
       console.log(this.user);
       let period = {
-        title : this.form.title,
+        title: this.form.title,
         startDate: this.getDateCreate(this.form.startDate),
         endDate: this.getDateCreate(this.form.endDate),
         deadline: this.getDatetimeCreate(this.form.deadline),
-        brandId : this.user.brand
-      }
+        brandId: this.user.brand
+      };
       console.log(period);
-      updatePeriod(this.user.token,this.form.id,period).then(response => {
-        if(response.status == 200){
+      updatePeriod(this.user.token, this.form.id, period).then(response => {
+        if (response.status == 200) {
           EventBus.$emit("CloseAccPeriodDialog", false);
           this.$message({
-              message: "Update thành công",
-              type: "success"
-            });
+            message: "Update thành công",
+            type: "success"
+          });
         }
-      })
+      });
     },
 
     getDateCreate(createdDate) {
@@ -148,13 +156,13 @@ export default {
         (ss > 9 ? "" : "0") +
         ss
       );
-    },
+    }
   },
   computed: {
     ...mapGetters("user", ["user"]),
     getUser() {
       return this.user;
-    },
+    }
   },
   created() {
     if (this.id != 0) {

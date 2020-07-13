@@ -65,7 +65,7 @@ export default {
           value: "-1000000"
         }
       ],
-    tableData2: [
+      tableData2: [
         {
           no: "1",
           name: "Tiền lương nhân viên bán hàng",
@@ -95,7 +95,7 @@ export default {
           no: "6",
           name: "Chi phí khác",
           value: "3000000"
-        },
+        }
       ]
     };
   }
@@ -116,12 +116,12 @@ export default {
   font-size: 25px;
 }
 .el-table >>> .titleTblRevenue {
-  background-color: #B2D214;
+  background-color: #b2d214;
   color: #333;
 }
 
 .el-table >>> .titleTblExpenses {
-  background-color: #F56B95;
+  background-color: #f56b95;
   color: #333;
 }
 </style>

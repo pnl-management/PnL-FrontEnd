@@ -3,11 +3,11 @@ import App from "./App.vue";
 import router from "./router";
 import store from "./store/index";
 import * as firebase from "firebase";
-import * as ElementUI from 'element-ui';
-import 'element-ui/lib/theme-chalk/index.css';
-import axios from 'axios';
+import * as ElementUI from "element-ui";
+import "element-ui/lib/theme-chalk/index.css";
+import axios from "axios";
 
-Vue.prototype.$http = axios
+Vue.prototype.$http = axios;
 Vue.config.productionTip = false;
 
 Vue.use(ElementUI);
