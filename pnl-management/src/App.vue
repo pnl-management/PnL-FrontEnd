@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <div id="nav">
-      <router-link v-if="(getUser.username) == null" to="/login"></router-link>
+      <router-link v-if="getUser.username == null" to="/login"></router-link>
     </div>
     <router-view />
   </div>
@@ -11,9 +11,9 @@ import { mapGetters } from "vuex";
 export default {
   name: "App",
   computed: {
-    ...mapGetters('user',['user']),
+    ...mapGetters("user", ["user"]),
 
-    getUser(){
+    getUser() {
       return this.user;
     }
   },
@@ -21,6 +21,6 @@ export default {
     if (this.getUser.username == null) {
       this.$router.replace({ name: "login" });
     }
-  },
+  }
 };
 </script>

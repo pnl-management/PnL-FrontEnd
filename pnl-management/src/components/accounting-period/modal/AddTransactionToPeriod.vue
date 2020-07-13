@@ -1,20 +1,47 @@
 <template>
   <div>
     <el-table :data="listTransaction">
-      <el-table-column prop="date" label="Ngày tạo" width="100"></el-table-column>
+      <el-table-column
+        prop="date"
+        label="Ngày tạo"
+        width="100"
+      ></el-table-column>
       <el-table-column prop="time" label="Giờ tạo" width="90"></el-table-column>
-      <el-table-column prop="store" label="Cửa hàng" width="150"></el-table-column>
-      <el-table-column prop="name" label="Tên giao dịch" width="150"></el-table-column>
-      <el-table-column prop="type" label="Loại giao dịch" width="120"></el-table-column>
-      <el-table-column prop="value" label="Số tiền (VNĐ)" width="120"></el-table-column>
+      <el-table-column
+        prop="store"
+        label="Cửa hàng"
+        width="150"
+      ></el-table-column>
+      <el-table-column
+        prop="name"
+        label="Tên giao dịch"
+        width="150"
+      ></el-table-column>
+      <el-table-column
+        prop="type"
+        label="Loại giao dịch"
+        width="120"
+      ></el-table-column>
+      <el-table-column
+        prop="value"
+        label="Số tiền (VNĐ)"
+        width="120"
+      ></el-table-column>
       <el-table-column label="Trạng thái" width="180">
         <template slot-scope="scope">
-          <el-tag :type="scope.row.color" disable-transitions>{{scope.row.status}}</el-tag>
+          <el-tag :type="scope.row.color" disable-transitions>{{
+            scope.row.status
+          }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column label="Trạng thái" width="180">
         <template slot-scope="scope">
-          <el-button size="mini" type="primary" @click="addToPeriod(scope.row.id)">Thêm</el-button>
+          <el-button
+            size="mini"
+            type="primary"
+            @click="addToPeriod(scope.row.id)"
+            >Thêm</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
@@ -110,15 +137,17 @@ export default {
     },
 
     addToPeriod(idTrans) {
-      addTransactionToPeriod(this.user.token,this.id,idTrans).then(response =>{
-        if(response.status == 200){
-          this.$message({
+      addTransactionToPeriod(this.user.token, this.id, idTrans).then(
+        response => {
+          if (response.status == 200) {
+            this.$message({
               message: "Update thành công",
               type: "success"
             });
-          this.getTransactions()
+            this.getTransactions();
+          }
         }
-      });
+      );
     },
 
     async getTransactions() {

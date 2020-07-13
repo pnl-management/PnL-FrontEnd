@@ -1,17 +1,15 @@
 import Vue from "vue";
 import Vuex from "vuex";
-import {
-    getAllAccPeriod,
-  } from "../../api/AccPeriodApi";
+import { getAllAccPeriod } from "../../api/AccPeriodApi";
 Vue.use(Vuex);
-export default ({
+export default {
   namespaced: true,
   state: {
-    accPeriod : []
+    accPeriod: []
   },
   getters: {
     accPeriod(state) {
-      return state.accPeriod
+      return state.accPeriod;
     }
   },
   mutations: {
@@ -21,14 +19,13 @@ export default ({
   },
   actions: {
     async getAllAccPeriod({ commit }, IdToken) {
-        await getAllAccPeriod(IdToken)
-          .then((response) => {
-            if (response.status === 200) {
-              commit("SET_ACC_PERIOD", response.data);
-            } else {
-              commit("SET_ACC_PERIOD", 0);
-            }
-          })
-      },
+      await getAllAccPeriod(IdToken).then(response => {
+        if (response.status === 200) {
+          commit("SET_ACC_PERIOD", response.data);
+        } else {
+          commit("SET_ACC_PERIOD", 0);
+        }
+      });
+    }
   }
-});
+};

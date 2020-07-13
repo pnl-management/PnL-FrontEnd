@@ -1,7 +1,7 @@
 <template>
   <el-header style="text-align: right; font-size: 12px">
     <template>
-      <span style="padding-right:30px">{{getUser.username}}</span>
+      <span style="padding-right:30px">{{ getUser.username }}</span>
       <el-button size="mini" type="info" @click="signOut()">Thoát</el-button>
     </template>
   </el-header>

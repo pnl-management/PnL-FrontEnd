@@ -11,7 +11,7 @@
           <Navigation />
         </th>
         <th>
-          <router-view/>
+          <router-view />
         </th>
       </tr>
     </table>
@@ -21,9 +21,9 @@
 import Header from "../components/Header";
 import Navigation from "../components/Navigation";
 export default {
-    components: {
-        Header: Header,
-        Navigation: Navigation,
-  },
+  components: {
+    Header: Header,
+    Navigation: Navigation
+  }
 };
 </script>

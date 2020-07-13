@@ -10,23 +10,51 @@
       <div>
         <el-table :data="listAccPeriod">
           <!-- <el-table-column prop="id" label="ID" width="50"></el-table-column> -->
-          <el-table-column prop="title" label="Tiêu đề" width="150"></el-table-column>
-          <el-table-column prop="startDate" label="Ngày bắt đầu" width="150"></el-table-column>
-          <el-table-column prop="endDate" label="Ngày kết thúc" width="150"></el-table-column>
-          <el-table-column prop="deadline" label="Ngày kết sổ" width="150"></el-table-column>
+          <el-table-column
+            prop="title"
+            label="Tiêu đề"
+            width="150"
+          ></el-table-column>
+          <el-table-column
+            prop="startDate"
+            label="Ngày bắt đầu"
+            width="150"
+          ></el-table-column>
+          <el-table-column
+            prop="endDate"
+            label="Ngày kết thúc"
+            width="150"
+          ></el-table-column>
+          <el-table-column
+            prop="deadline"
+            label="Ngày kết sổ"
+            width="150"
+          ></el-table-column>
           <el-table-column label="Chỉnh sửa" width="150">
             <template slot-scope="scope">
-              <el-button type="text" size="small" @click="goToDetail(scope.row.id)">Chi tiết</el-button>
+              <el-button
+                type="text"
+                size="small"
+                @click="goToDetail(scope.row.id)"
+                >Chi tiết</el-button
+              >
             </template>
           </el-table-column>
           <el-table-column label="Trạng thái" width="150">
             <template slot-scope="scope">
-              <el-tag :type="scope.row.color" disable-transitions>{{scope.row.status}}</el-tag>
+              <el-tag :type="scope.row.color" disable-transitions>{{
+                scope.row.status
+              }}</el-tag>
             </template>
           </el-table-column>
           <el-table-column label="Option" width="200">
             <template slot-scope="scope">
-              <el-button type="text" size="small" @click="goToAddTransaction(scope.row.id)">Thêm giao dịch</el-button>
+              <el-button
+                type="text"
+                size="small"
+                @click="goToAddTransaction(scope.row.id)"
+                >Thêm giao dịch</el-button
+              >
             </template>
           </el-table-column>
         </el-table>
@@ -46,7 +74,7 @@
       <AccPeriodDetail v-bind:id="id" v-if="dialogVisible" />
     </el-dialog>
     <el-dialog
-     width="80%"
+      width="80%"
       title="Thêm giao dịch vào kì kế toán"
       :visible.sync="dialogAddVisible"
     >
@@ -58,8 +86,8 @@
 import { mapGetters, mapActions } from "vuex";
 import { status } from "../../enum/AccPeriodEnum";
 import AccPeriodDetail from "./modal/AccPeriodDetail";
-import EventBus from '../../EventBus'
-import AddTransactionToPeriodVue from './modal/AddTransactionToPeriod.vue';
+import EventBus from "../../EventBus";
+import AddTransactionToPeriodVue from "./modal/AddTransactionToPeriod.vue";
 export default {
   components: {
     AccPeriodDetail,
@@ -69,9 +97,9 @@ export default {
     return {
       listAccPeriod: [],
       value: 0,
-      dialogVisible : false,
-      dialogAddVisible : false,
-      id : 0,
+      dialogVisible: false,
+      dialogAddVisible: false,
+      id: 0
     };
   },
   computed: {
@@ -85,9 +113,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions("accPeriod", [
-      "getAllAccPeriod",
-    ]),
+    ...mapActions("accPeriod", ["getAllAccPeriod"]),
 
     goToDetail(id) {
       // this.$router.push("/main/transactionDetail/" + id);
@@ -100,7 +126,6 @@ export default {
       this.dialogAddVisible = true;
       this.id = id;
     },
-
 
     getTableData(list) {
       this.listAccPeriod = [];
@@ -138,22 +163,22 @@ export default {
       this.getTableData(
         JSON.parse(JSON.stringify(this.getAllAccPeriodFromStore))
       );
-    },
+    }
   },
   created() {
     this.getTransactions();
   },
 
   mounted() {
-    EventBus.$on("CloseAccPeriodDialog",(value) =>{
+    EventBus.$on("CloseAccPeriodDialog", value => {
       this.dialogVisible = value;
-    })
+    });
   },
 
   destroyed() {
-     EventBus.$on("CloseAccPeriodDialog",(value) =>{
+    EventBus.$on("CloseAccPeriodDialog", value => {
       this.dialogVisible = value;
-  })
+    });
   }
 };
 </script>

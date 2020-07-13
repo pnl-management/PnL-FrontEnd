@@ -6,7 +6,7 @@ import Dashboard from "../components/Dashboard";
 import Transaction from "../components/transaction/Transaction";
 import Report from "../components/report/Report";
 import ReportDetail from "../components/report/ReportDetail";
-import AccPeriod from "../components/accounting-period/AccPeriod"
+import AccPeriod from "../components/accounting-period/AccPeriod";
 Vue.use(VueRouter);
 
 const routes = [
@@ -44,10 +44,9 @@ const routes = [
         path: "/main/acc-period",
         name: "accPeriod",
         component: AccPeriod
-      },
+      }
     ]
   }
-
 ];
 
 const router = new VueRouter({
