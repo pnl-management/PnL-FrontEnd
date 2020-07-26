@@ -7,6 +7,8 @@ import Transaction from "../components/transaction/Transaction";
 import Report from "../components/report/Report";
 import ReportDetail from "../components/report/ReportDetail";
 import AccPeriod from "../components/accounting-period/AccPeriod";
+import Store from "../components/store/Store";
+import Receipt from "../components/receipt/Receipt";
 Vue.use(VueRouter);
 
 const routes = [
@@ -44,6 +46,16 @@ const routes = [
         path: "/main/acc-period",
         name: "accPeriod",
         component: AccPeriod
+      },
+      {
+        path: "/main/store",
+        name: "store",
+        component: Store
+      },
+      {
+        path: "/main/receipt",
+        name: "receipt",
+        component: Receipt
       }
     ]
   }

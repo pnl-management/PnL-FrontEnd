@@ -2,13 +2,13 @@
   <div>
     <el-main>
       <div style="text-align:left;padding: 20px 0px;">
-        <span class="title">Báo cáo giao dịch</span>
-      </div>
-      <div class="select">
-        <el-button @click="goToCreate()">Tạo mới</el-button>
+        <span class="title">Danh Sách Hoá Đơn</span>
       </div>
       <div>
-        <el-table :data="listTransaction">
+        <el-table
+          :data="listReceipt"
+          :default-sort="{ prop: 'id', order: 'descending' }"
+        >
           <el-table-column prop="id" label="ID" width="50"></el-table-column>
           <el-table-column
             prop="date"
@@ -57,90 +57,63 @@
           </el-table-column>
           <el-table-column label="Trạng thái" width="180">
             <template slot-scope="scope">
-              <el-tag :type="scope.row.color" disable-transitions>{{
-                scope.row.status
-              }}</el-tag>
+              <el-tag :type="scope.row.color" disable-transitions>
+                {{ scope.row.status }}
+              </el-tag>
             </template>
           </el-table-column>
         </el-table>
-        <el-pagination
-          background
-          @current-change="handleCurrentChange"
-          :current-page.sync="currentPage"
-          :total="length"
-          layout="prev, pager, next"
-        ></el-pagination>
       </div>
     </el-main>
-    <el-dialog
-      title="Chi tiết Giao dịch"
-      :visible.sync="dialogVisible"
-      width="66%"
-    >
-      <transaction-detail v-bind:id="id" v-if="dialogVisible" />
-    </el-dialog>
-    <el-dialog
-      title="Tạo Giao dịch"
-      :visible.sync="dialogCreateVisible"
-      width="70%"
-    >
-      <CreateTransaction v-if="dialogCreateVisible" />
+    <el-dialog title="Chi Tiết Hoá Đơn" :visible.sync="dialogVisible">
+      <ReceiptDetail v-bind:id="id" v-if="dialogVisible" />
     </el-dialog>
   </div>
 </template>
 <script>
 import { mapGetters, mapActions } from "vuex";
-import { status } from "../../enum/TransactionStatusEnum";
+import { status } from "../../enum/ReceiptEnum";
 import { type } from "../../enum/TypeEnum";
-import TransactionDetail from "./modal/TransactionDetail";
+import ReceiptDetail from "./modal/ReceiptDetail";
 import EventBus from "../../EventBus";
-import CreateTransaction from "./modal/CreateTransaction.vue";
 export default {
   components: {
-    TransactionDetail,
-    CreateTransaction
+    ReceiptDetail
   },
   data() {
     return {
       pageOfItems: [],
-      listTransaction: [],
+      listReceipt: [],
       length: 0,
       currentPage: 1,
       value: 0,
       dialogVisible: false,
-      dialogCreateVisible: false,
       id: 0
     };
   },
   computed: {
     ...mapGetters("user", ["user"]),
-    ...mapGetters("transaction", ["allTransaction", "transactionLength"]),
+    ...mapGetters("receipt", ["getListReceipt"]),
     getUser() {
       let user = localStorage.getItem("user");
       return JSON.parse(user);
     },
-    getAllTransactionFromStore() {
-      return this.allTransaction;
+    getAllReceipt() {
+      return this.getListReceipt;
     }
   },
   methods: {
-    ...mapActions("transaction", [
-      "getAllTransactions",
-      "getTransactionLength"
-    ]),
+    ...mapActions("receipt", ["getReceiptByBrand"]),
 
     goToDetail(id) {
       this.dialogVisible = true;
       this.id = id;
     },
 
-    goToCreate() {
-      this.dialogCreateVisible = true;
-    },
     getTableData(list) {
-      this.listTransaction = [];
+      this.listReceipt = [];
       list.forEach(data => {
-        let transaction = {
+        let receipt = {
           id: data.id,
           name: data.name,
           value: data.value,
@@ -149,14 +122,10 @@ export default {
           time: this.getTimeCreate(data.createdTime),
           store: data.store.name,
           creator: data.createBy.username,
-          status: data.lastestStatus
-            ? status.get(data.lastestStatus.status).name
-            : status.get(0).name,
-          color: data.lastestStatus
-            ? status.get(data.lastestStatus.status).color
-            : status.get(0).color
+          status: status.get(data.status).name,
+          color: status.get(data.status).color
         };
-        this.listTransaction.push(transaction);
+        this.listReceipt.push(receipt);
       });
     },
 
@@ -192,42 +161,29 @@ export default {
       );
     },
 
-    handleCurrentChange(val) {
-      let offset = val * 10 - 10;
-      this.getTransactions(offset);
-    },
-
-    async getTransactions(offset) {
+    async getReceipt() {
       let params = {
-        limit: 10,
-        offset,
-        token: this.getUser.token
+        IdToken: this.getUser.token,
+        brandId: this.getUser.brand
       };
-      await this.getAllTransactions(params);
-      this.getTableData(
-        JSON.parse(JSON.stringify(this.getAllTransactionFromStore))
-      );
-    },
-
-    async getLength() {
-      await this.getTransactionLength(this.getUser.token);
-      this.length = this.transactionLength;
+      await this.getReceiptByBrand(params);
+      this.getTableData(JSON.parse(JSON.stringify(this.getAllReceipt)));
     }
   },
 
+  created() {
+    this.getReceipt();
+  },
+
   mounted() {
-    EventBus.$on("CloseTransactionDetailDialog", value => {
-      this.dialogCreateVisible = value;
-      this.getTransactions(0);
+    EventBus.$on("CloseReceiptDetailDialog", value => {
+      this.dialogVisible = value;
+      this.getReceipt();
     });
   },
 
   destroyed() {
-    EventBus.$off("CloseTransactionDetailDialog");
-  },
-  created() {
-    this.getTransactions(0);
-    this.getLength();
+    EventBus.$off("CloseReceiptDetailDialog");
   }
 };
 </script>

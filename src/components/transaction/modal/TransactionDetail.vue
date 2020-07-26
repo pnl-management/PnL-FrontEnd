@@ -1,89 +1,99 @@
 <template>
   <div>
     <el-main v-loading="loading">
-      <el-form ref="form" :model="form" label-width="120px">
-        <el-form-item label="Mã giao dịch">
-          <el-col>
-            <el-input v-model="form.id" readonly></el-input>
-          </el-col>
-        </el-form-item>
-        <el-form-item label="Trạng thái">
-          <el-col>
-            <el-input v-model="form.state" readonly></el-input>
-          </el-col>
-        </el-form-item>
-        <el-form-item label="Tên giao dịch">
-          <el-col>
-            <el-input v-model="form.name" readonly></el-input>
-          </el-col>
-        </el-form-item>
-        <el-form-item label="Loại giao dịch">
-          <el-col style="text-align:left">
-            <el-radio-group v-model="form.type">
-              <el-radio label="Doanh thu"></el-radio>
-              <el-radio label="Chi phí"></el-radio>
-            </el-radio-group>
-          </el-col>
-        </el-form-item>
-        <el-form-item label="Ngày tạo">
-          <el-col>
-            <el-date-picker
-              v-model="form.date"
-              type="datetime"
-              placeholder="Select date and time"
-              readonly
-            ></el-date-picker>
-          </el-col>
-        </el-form-item>
-        <el-form-item label="Số tiền">
-          <el-col>
-            <el-input v-model="form.value" readonly></el-input>
-          </el-col>
-        </el-form-item>
-        <el-form-item label="Mô tả">
-          <el-col>
-            <el-input type="textarea" v-model="form.desc" readonly></el-input>
-          </el-col>
-        </el-form-item>
-        <el-form-item>
-          <el-col>
-            <el-card :body-style="{ padding: '0px' }" v-if="form.img != null">
-              <img :src="form.img" width="200px" height="300px" class="image" />
-              <div style="padding: 14px;">
-                <span>Chứng từ</span>
-              </div>
-            </el-card>
-          </el-col>
-        </el-form-item>
-        <el-form-item label="Đánh giá">
-          <el-col>
-            <el-input
-              type="textarea"
-              :rows="5"
-              placeholder="Đánh giá của kế toán trưởng"
-              v-model="feedback"
-            ></el-input>
-          </el-col>
-        </el-form-item>
-        <el-button type="success" @click="changeStatusTransaction('approve')"
-          >Chấp thuận</el-button
-        >
-        <el-button type="danger" @click="changeStatusTransaction('reject')"
-          >Từ chối</el-button
-        >
-        <el-button type="info" @click="changeStatusTransaction('req-modified')"
-          >Yêu cầu chỉnh sửa</el-button
-        >
-      </el-form>
+      <el-tabs v-model="activeName">
+        <el-tab-pane label="Thông tin" name="first">
+          <el-form ref="form" :model="form" label-width="120px">
+            <el-form-item label="ID">
+              <el-col>
+                <el-input v-model="form.id"></el-input>
+              </el-col>
+            </el-form-item>
+            <el-form-item label="Trạng thái">
+              <el-col>
+                <el-input v-model="form.state"></el-input>
+              </el-col>
+            </el-form-item>
+            <el-form-item label="Tên giao dịch">
+              <el-col>
+                <el-input v-model="form.name"></el-input>
+              </el-col>
+            </el-form-item>
+            <el-form-item label="Loại giao dịch">
+              <el-col>
+                <el-input v-model="form.type"></el-input>
+              </el-col>
+            </el-form-item>
+            <el-form-item label="Ngày tạo">
+              <el-col>
+                <el-date-picker
+                  v-model="form.date"
+                  type="datetime"
+                  placeholder="Select date and time"
+                ></el-date-picker>
+              </el-col>
+            </el-form-item>
+            <el-form-item label="Số tiền">
+              <el-col>
+                <el-input v-model="form.value"></el-input>
+              </el-col>
+            </el-form-item>
+            <el-form-item label="Mô tả">
+              <el-col>
+                <el-input type="textarea" v-model="form.desc"></el-input>
+              </el-col>
+            </el-form-item>
+          </el-form>
+        </el-tab-pane>
+        <el-tab-pane label="Hoá đơn" name="second">
+          <el-table
+            :data="receipt"
+            :default-sort="{ prop: 'id', order: 'descending' }"
+          >
+            <el-table-column prop="id" label="ID" width="50"></el-table-column>
+            <el-table-column
+              prop="date"
+              label="Ngày tạo"
+              width="100"
+            ></el-table-column>
+            <el-table-column
+              prop="time"
+              label="Giờ tạo"
+              width="90"
+            ></el-table-column>
+            <el-table-column
+              prop="name"
+              label="Tên giao dịch"
+              width="150"
+            ></el-table-column>
+            <el-table-column
+              prop="value"
+              label="Số tiền (VNĐ)"
+              width="120"
+            ></el-table-column>
+            <el-table-column
+              prop="creator"
+              label="Người tạo"
+              width="120"
+            ></el-table-column>
+            <el-table-column label="Trạng thái" width="180">
+              <template slot-scope="scope">
+                <el-tag :type="scope.row.color" disable-transitions>
+                  {{ scope.row.status }}
+                </el-tag>
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-tab-pane>
+      </el-tabs>
     </el-main>
   </div>
 </template>
 <script>
 import { mapGetters, mapActions } from "vuex";
-import { changeStatusTransaction } from "../../../api/transactionApi";
-import { status } from "../../../enum/TransactionStatusEnum";
-import { type } from "../../../enum/TransactionTypeEnum";
-import EventBus from "../../../EventBus";
+import { status as statusTrans } from "../../../enum/TransactionStatusEnum";
+import { status as statusRecept } from "../../../enum/ReceiptEnum";
+// import EventBus from "../../../EventBus";
 export default {
   props: ["id"],
   name: "TransactionDetail",
@@ -96,16 +106,22 @@ export default {
         state: null,
         date: null,
         desc: null,
-        value: null,
-        img: null
+        value: null
       },
+      receipt: [],
       loading: false,
-      feedback: null
+      feedback: null,
+      activeName: "first"
     };
   },
   computed: {
     ...mapGetters("user", ["user"]),
-    ...mapGetters("transaction", ["transaction"])
+    ...mapGetters("transaction", ["transaction"]),
+
+    getUser() {
+      let user = localStorage.getItem("user");
+      return JSON.parse(user);
+    }
   },
   methods: {
     ...mapActions("transaction", ["getTransactionDetail"]),
@@ -118,51 +134,73 @@ export default {
       this.form = {
         name: this.transaction.name,
         id: this.transaction.id,
-        type: type.get(this.transaction.type),
-        state: status.get(this.transaction.state).name,
+        type: this.transaction.type,
+        state: statusTrans.get(this.transaction.state).name,
         date: this.getDatetime(this.transaction.date),
         desc: this.transaction.desc,
-        value: this.transaction.value,
-        img: this.transaction.img
+        value: this.transaction.value
       };
+      console.log(this.transaction.receipt);
+      this.transaction.receipt.forEach(data => {
+        let rec = {
+          id: data.id,
+          name: data.name,
+          value: data.value,
+          type: data.category.name,
+          date: this.getDateCreate(data.createdTime),
+          time: this.getTimeCreate(data.createdTime),
+          store: data.store.name,
+          creator: data.createBy.username,
+          status: statusRecept.get(data.status).name,
+          color: statusRecept.get(data.status).color
+        };
+        console.log(rec);
+        this.receipt.push(rec);
+      });
     },
 
-    changeStatusTransaction(type) {
-      var data = {
-        type,
-        feedback: this.feedback
-      };
-      changeStatusTransaction(this.user.token, this.id, data).then(response => {
-        console.log(response);
-        if (response.status == 201) {
-          EventBus.$emit("CloseTransactionDetailDialog", false);
-          this.$message({
-            message: "Update thành công",
-            type: "success"
-          });
-        } else {
-          this.$message.error(
-            "Tình trạng hiện tại của giao dịch không thể đổi"
-          );
-        }
-      });
+    getDateCreate(createdDate) {
+      let date = new Date(createdDate);
+      let mm = date.getMonth() + 1;
+      let dd = date.getDate();
+      return (
+        date.getFullYear() +
+        "-" +
+        (mm > 9 ? "" : "0") +
+        mm +
+        "-" +
+        (dd > 9 ? "" : "0") +
+        dd
+      );
+    },
+
+    getTimeCreate(createdDate) {
+      let date = new Date(createdDate);
+      let hh = date.getHours();
+      let mm = date.getMinutes();
+      let ss = date.getSeconds();
+      return (
+        (hh > 9 ? "" : "0") +
+        hh +
+        ":" +
+        (mm > 9 ? "" : "0") +
+        mm +
+        ":" +
+        (ss > 9 ? "" : "0") +
+        ss
+      );
     }
   },
 
   async created() {
     this.loading = true;
     let data = {
-      idToken: this.user.token,
+      idToken: this.getUser.token,
       id: this.id
     };
     await this.getTransactionDetail(data);
     this.getTransaction();
     this.loading = false;
-    console.log(this.form.img);
-  },
-
-  destroyed() {
-    console.log("ahihi");
   }
 };
 </script>

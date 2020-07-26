@@ -1,6 +1,7 @@
 <template>
   <div>
-    <el-table :data="listTransaction">
+    <el-table v-loading="loading" :data="listTransaction">
+      <el-table-column prop="id" label="ID" width="50"></el-table-column>
       <el-table-column
         prop="date"
         label="Ngày tạo"
@@ -15,7 +16,7 @@
       <el-table-column
         prop="name"
         label="Tên giao dịch"
-        width="150"
+        width="120"
       ></el-table-column>
       <el-table-column
         prop="type"
@@ -34,7 +35,7 @@
           }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="Trạng thái" width="180">
+      <el-table-column label="Trạng thái" width="110">
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -50,23 +51,24 @@
 <script>
 import { mapGetters, mapActions } from "vuex";
 import { status } from "../../../enum/TransactionStatusEnum";
-import { type } from "../../../enum/TransactionTypeEnum";
+import { type } from "../../../enum/TypeEnum";
 import { addTransactionToPeriod } from "../../../api/AccPeriodApi";
-// import EventBus from '../../../EventBus';
 export default {
   props: ["id"],
   name: "AddTransactionToPeriod",
   data() {
     return {
       listTransaction: [],
-      dialogVisible: false
+      dialogVisible: false,
+      loading: false
     };
   },
   computed: {
     ...mapGetters("user", ["user"]),
     ...mapGetters("transaction", ["allTransaction", "transactionLength"]),
     getUser() {
-      return this.user;
+      let user = localStorage.getItem("user");
+      return JSON.parse(user);
     },
     getAllTransactionFromStore() {
       return this.allTransaction;
@@ -88,11 +90,10 @@ export default {
           name: data.name,
           value: data.value,
           type: type.get(data.category.type),
-          createBy: data.createByParticipant.username,
           date: this.getDateCreate(data.createdTime),
           time: this.getTimeCreate(data.createdTime),
           store: data.store.name,
-          creator: data.createByParticipant.username,
+          creator: data.createBy.username,
           status: data.lastestStatus
             ? status.get(data.lastestStatus.status).name
             : status.get(0).name,
@@ -137,9 +138,11 @@ export default {
     },
 
     addToPeriod(idTrans) {
-      addTransactionToPeriod(this.user.token, this.id, idTrans).then(
+      this.loading = true;
+      addTransactionToPeriod(this.getUser.token, this.id, idTrans).then(
         response => {
           if (response.status == 200) {
+            this.loading = false;
             this.$message({
               message: "Update thành công",
               type: "success"
@@ -151,26 +154,16 @@ export default {
     },
 
     async getTransactions() {
-      await this.getAvailableTransaction(this.user.token);
+      await this.getAvailableTransaction(this.getUser.token);
       this.getTableData(
         JSON.parse(JSON.stringify(this.getAllTransactionFromStore))
       );
     }
   },
-
-  //   mounted() {
-  //       EventBus.$on("CloseTransactionDetailDialog",(value) =>{
-  //       this.dialogVisible = value;
-  //     })
-  //   },
-
-  //   destroyed() {
-  //     EventBus.$off("CloseTransactionDetailDialog",(value) =>{
-  //       this.dialogVisible = value;
-  //     })
-  //   },
   created() {
+    this.loading = true;
     this.getTransactions();
+    this.loading = false;
   }
 };
 </script>

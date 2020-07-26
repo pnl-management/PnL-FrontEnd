@@ -15,23 +15,20 @@ export default {
     ...mapGetters("user", ["user"]),
 
     getUser() {
-      return this.user;
+      let user = localStorage.getItem("user");
+      console.log(JSON.parse(user));
+      return JSON.parse(user);
     }
   },
   methods: {
     ...mapActions("user", ["logout"]),
     signOut() {
+      console.log("ahihi");
       firebase
         .auth()
         .signOut()
         .then(async () => {
-          let user = {
-            fullname: null,
-            role: null,
-            username: null,
-            token: null
-          };
-          await this.logout(user);
+          await this.logout();
           this.$router.push({
             name: "login"
           });

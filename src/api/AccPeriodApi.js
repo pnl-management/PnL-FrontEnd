@@ -85,3 +85,26 @@ export function addTransactionToPeriod(IdToken, periodId, tranId) {
     }
   });
 }
+
+export function changeStatusPeriod(IdToken, periodId, status) {
+  return axios({
+    method: "PUT",
+    url: `api/periods/${periodId}/status/${status}`,
+    baseURL: baseURL,
+    headers: {
+      Authorization: "Bearer " + IdToken
+    }
+  });
+}
+
+export function updateReport(IdToken) {
+  return axios({
+    method: "GET",
+    url: `api/reports`,
+    baseURL: baseURL,
+    headers: {
+      Authorization: "Bearer " + IdToken
+    },
+    crossDomain: true
+  });
+}

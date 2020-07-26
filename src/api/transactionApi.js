@@ -73,36 +73,44 @@ export function getTransactionLength(IdToken) {
   });
 }
 
-export function getTransactionEvidences(IdToken, id) {
-  return axios({
-    method: "GET",
-    url: "/api/transactions/" + id + "/evidences",
-    baseURL: baseURL,
+export function createTransaction(IdToken, transaction) {
+  let json = {
+    Brand: {
+      id: transaction.brandId
+    },
+    Store: {
+      id: transaction.storeId
+    },
+    Category: {
+      id: transaction.categoryId
+    },
+    name: transaction.name,
+    value: transaction.value,
+    description: transaction.description,
+    listReceipt: transaction.listReceipt
+  };
+  return fetch(baseURL + "api/transactions", {
+    method: "POST",
     headers: {
+      "content-type": "application/json;charset=utf-8",
+      Accept: "application/json",
       Authorization: "Bearer " + IdToken
     },
-    crossDomain: true
+    body: JSON.stringify(json)
   });
 }
 
-export function changeStatusTransaction(IdToken, id, data) {
-  console.log(data);
-  return fetch(
-    baseURL + `api/transactions/${id}/journeys` + `?type=${data.type}`,
-    {
-      method: "POST",
-      headers: {
-        "content-type": "application/json;charset=utf-8",
-        Accept: "application/json",
-        Authorization: "Bearer " + IdToken
-      },
-      body: JSON.stringify({
-        feedback: data.feedback,
-        Transaction: {
-          id: id
-        }
-      }),
-      crossDomain: true
-    }
-  );
+export function getTransactionCategory(idToken) {
+  return axios({
+    method: "GET",
+    url: "/api/brands/transaction-categories",
+    params: {
+      limit: 20
+    },
+    baseURL: baseURL,
+    headers: {
+      Authorization: "Bearer " + idToken
+    },
+    crossDomain: true
+  });
 }

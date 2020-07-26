@@ -20,11 +20,20 @@
         <span class="title">Yêu cầu xác nhận</span>
       </div>
       <div>
-        <el-table :data="listWaitTransaction">
+        <el-table
+          :data="listReceipt"
+          :default-sort="{ prop: 'id', order: 'descending' }"
+        >
+          <el-table-column prop="id" label="ID" width="50"></el-table-column>
           <el-table-column
-            prop="brand"
-            label="Nhãn hiệu"
-            width="150"
+            prop="date"
+            label="Ngày tạo"
+            width="100"
+          ></el-table-column>
+          <el-table-column
+            prop="time"
+            label="Giờ tạo"
+            width="90"
           ></el-table-column>
           <el-table-column
             prop="store"
@@ -34,7 +43,7 @@
           <el-table-column
             prop="name"
             label="Tên giao dịch"
-            width="250"
+            width="150"
           ></el-table-column>
           <el-table-column
             prop="type"
@@ -44,19 +53,34 @@
           <el-table-column
             prop="value"
             label="Số tiền (VNĐ)"
-            width="150"
+            width="120"
           ></el-table-column>
-          <el-table-column label="Chi tiết" width="120">
-            <el-button type="text" size="small">Chi tiết</el-button>
-          </el-table-column>
-          <el-table-column label="Trạng thái" width="150">
+          <el-table-column
+            prop="creator"
+            label="Người tạo"
+            width="120"
+          ></el-table-column>
+          <el-table-column label="Chi tiết" width="70">
             <template slot-scope="scope">
-              <el-tag :type="scope.row.color" disable-transitions>{{
-                scope.row.status
-              }}</el-tag>
+              <el-button
+                type="text"
+                size="small"
+                @click="goToDetail(scope.row.id)"
+                >Chi tiết</el-button
+              >
+            </template>
+          </el-table-column>
+          <el-table-column label="Trạng thái" width="180">
+            <template slot-scope="scope">
+              <el-tag :type="scope.row.color" disable-transitions>
+                {{ scope.row.status }}
+              </el-tag>
             </template>
           </el-table-column>
         </el-table>
+        <el-dialog title="Chi Tiết Hoá Đơn" :visible.sync="dialogVisible">
+          <ReceiptDetail v-bind:id="id" v-if="dialogVisible" />
+        </el-dialog>
       </div>
     </el-main>
   </div>
@@ -64,11 +88,14 @@
 <script>
 import { mapGetters, mapActions } from "vuex";
 // import LineChart from "../chart/LineChart";
-import { status } from "../enum/TransactionStatusEnum";
-import { type } from "../enum/TransactionTypeEnum";
+import { status } from "../enum/ReceiptEnum";
+import { type } from "../enum/TypeEnum";
+import ReceiptDetail from "./receipt/modal/ReceiptDetail";
+import EventBus from "../EventBus";
 export default {
   components: {
     // LineChart
+    ReceiptDetail
   },
   data() {
     return {
@@ -91,50 +118,106 @@ export default {
         responsive: true,
         maintainAspectRatio: false
       },
-      listWaitTransaction: []
+      listReceipt: [],
+      dialogVisible: false
     };
   },
   computed: {
     ...mapGetters("user", ["user"]),
-    ...mapGetters("transaction", ["waitingTransactions"]),
+    ...mapGetters("receipt", ["getListReceipt"]),
+
     getUser() {
-      return this.user;
+      let user = localStorage.getItem("user");
+      return JSON.parse(user);
     },
-    getWaitingTransactionFromStore() {
-      return this.waitingTransactions;
+    getAllReceipt() {
+      return this.getListReceipt;
     }
   },
 
   methods: {
-    ...mapActions("transaction", ["getWaitingTransactions"]),
+    ...mapActions("receipt", ["getReceiptByBrand"]),
     getTableData(list) {
+      this.listReceipt = [];
       list.forEach(data => {
-        let transaction = {
-          id: name.id,
+        let receipt = {
+          id: data.id,
           name: data.name,
           value: data.value,
           type: type.get(data.category.type),
-          createBy: data.createByParticipant.username,
-          brand: data.brand.name,
+          date: this.getDateCreate(data.createdTime),
+          time: this.getTimeCreate(data.createdTime),
           store: data.store.name,
-          status: status.get(data.lastestStatus.status).name,
-          color: status.get(data.lastestStatus.status).color
+          creator: data.createBy.username,
+          status: status.get(data.status).name,
+          color: status.get(data.status).color
         };
-        this.listWaitTransaction.push(transaction);
+        if (data.status == 0) {
+          this.listReceipt.push(receipt);
+        }
       });
     },
 
-    goToDetail() {
-      this.$router.replace({ name: "transactionDetail" });
+    goToDetail(id) {
+      this.dialogVisible = true;
+      this.id = id;
+    },
+
+    getDateCreate(createdDate) {
+      let date = new Date(createdDate);
+      let mm = date.getMonth() + 1;
+      let dd = date.getDate();
+      return (
+        date.getFullYear() +
+        "-" +
+        (mm > 9 ? "" : "0") +
+        mm +
+        "-" +
+        (dd > 9 ? "" : "0") +
+        dd
+      );
+    },
+
+    getTimeCreate(createdDate) {
+      let date = new Date(createdDate);
+      let hh = date.getHours();
+      let mm = date.getMinutes();
+      let ss = date.getSeconds();
+      return (
+        (hh > 9 ? "" : "0") +
+        hh +
+        ":" +
+        (mm > 9 ? "" : "0") +
+        mm +
+        ":" +
+        (ss > 9 ? "" : "0") +
+        ss
+      );
+    },
+
+    async getReceipt() {
+      let params = {
+        IdToken: this.getUser.token,
+        brandId: this.getUser.brand
+      };
+      await this.getReceiptByBrand(params);
+      this.getTableData(JSON.parse(JSON.stringify(this.getAllReceipt)));
     }
   },
 
   async created() {
-    await this.getWaitingTransactions(this.user.token);
-    this.getTableData(
-      JSON.parse(JSON.stringify(this.getWaitingTransactionFromStore))
-    );
-    console.log(this.waitTrasactionList);
+    this.getReceipt();
+  },
+
+  mounted() {
+    EventBus.$on("CloseReceiptDetailDialog", value => {
+      this.dialogVisible = value;
+      this.getReceipt();
+    });
+  },
+
+  destroyed() {
+    EventBus.$off("CloseReceiptDetailDialog");
   }
 };
 </script>

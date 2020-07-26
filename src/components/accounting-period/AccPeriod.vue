@@ -2,7 +2,7 @@
   <div>
     <el-main>
       <div style="text-align:left;padding: 20px 0px;">
-        <span class="title">Báo cáo giao dịch</span>
+        <span class="title">Kì Kế Toán</span>
       </div>
       <div class="select">
         <el-button @click="goToDetail(0)">Tạo mới</el-button>
@@ -30,7 +30,7 @@
             label="Ngày kết sổ"
             width="150"
           ></el-table-column>
-          <el-table-column label="Chỉnh sửa" width="150">
+          <el-table-column label="Chỉnh sửa" width="120">
             <template slot-scope="scope">
               <el-button
                 type="text"
@@ -40,20 +40,27 @@
               >
             </template>
           </el-table-column>
-          <el-table-column label="Trạng thái" width="150">
+          <el-table-column label="Trạng thái" width="100">
             <template slot-scope="scope">
               <el-tag :type="scope.row.color" disable-transitions>{{
                 scope.row.status
               }}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column label="Option" width="200">
+          <el-table-column label="Operations" width="280">
             <template slot-scope="scope">
               <el-button
-                type="text"
+                :disabled="scope.row.status == 'Đang mở' ? false : true"
                 size="small"
                 @click="goToAddTransaction(scope.row.id)"
                 >Thêm giao dịch</el-button
+              >
+              <el-button
+                :disabled="scope.row.status == 'Đang mở' ? false : true"
+                type="danger"
+                size="small"
+                @click="goToChangeStatus(scope.row.id)"
+                >Đóng kì kế toán</el-button
               >
             </template>
           </el-table-column>
@@ -80,6 +87,12 @@
     >
       <AddTransactionToPeriodVue v-bind:id="id" v-if="dialogAddVisible" />
     </el-dialog>
+    <el-dialog
+      title="Mở kì kế toán tiếp theo"
+      :visible.sync="dialogChangeStatusVisible"
+    >
+      <AccPeriodCreated v-bind:id="id" v-if="dialogChangeStatusVisible" />
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -88,10 +101,12 @@ import { status } from "../../enum/AccPeriodEnum";
 import AccPeriodDetail from "./modal/AccPeriodDetail";
 import EventBus from "../../EventBus";
 import AddTransactionToPeriodVue from "./modal/AddTransactionToPeriod.vue";
+import AccPeriodCreated from "./modal/AccPeriodCreated.vue";
 export default {
   components: {
     AccPeriodDetail,
-    AddTransactionToPeriodVue
+    AddTransactionToPeriodVue,
+    AccPeriodCreated
   },
   data() {
     return {
@@ -99,6 +114,7 @@ export default {
       value: 0,
       dialogVisible: false,
       dialogAddVisible: false,
+      dialogChangeStatusVisible: false,
       id: 0
     };
   },
@@ -106,7 +122,8 @@ export default {
     ...mapGetters("user", ["user"]),
     ...mapGetters("accPeriod", ["accPeriod"]),
     getUser() {
-      return this.user;
+      let user = localStorage.getItem("user");
+      return JSON.parse(user);
     },
     getAllAccPeriodFromStore() {
       return this.accPeriod;
@@ -124,6 +141,12 @@ export default {
     goToAddTransaction(id) {
       // this.$router.push("/main/transactionDetail/" + id);
       this.dialogAddVisible = true;
+      this.id = id;
+    },
+
+    goToChangeStatus(id) {
+      // this.$router.push("/main/transactionDetail/" + id);
+      this.dialogChangeStatusVisible = true;
       this.id = id;
     },
 
@@ -158,27 +181,30 @@ export default {
       );
     },
 
-    async getTransactions() {
-      await this.getAllAccPeriod(this.user.token);
+    async getPeriods() {
+      await this.getAllAccPeriod(this.getUser.token);
       this.getTableData(
         JSON.parse(JSON.stringify(this.getAllAccPeriodFromStore))
       );
     }
   },
   created() {
-    this.getTransactions();
-  },
-
-  mounted() {
+    this.getPeriods();
     EventBus.$on("CloseAccPeriodDialog", value => {
       this.dialogVisible = value;
+      this.getPeriods();
+    });
+    EventBus.$on("CloseChangeStatusDialog", value => {
+      this.dialogChangeStatusVisible = value;
+      this.getPeriods();
     });
   },
+
+  mounted() {},
 
   destroyed() {
-    EventBus.$on("CloseAccPeriodDialog", value => {
-      this.dialogVisible = value;
-    });
+    EventBus.$off("CloseAccPeriodDialog");
+    EventBus.$off("CloseChangeStatusDialog");
   }
 };
 </script>

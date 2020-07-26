@@ -6,7 +6,7 @@ import {
   getTransactionLength,
   getAvailableTransaction,
   getDetailTransaction,
-  getTransactionEvidences
+  getTransactionCategory
 } from "../../api/transactionApi";
 
 Vue.use(Vuex);
@@ -24,8 +24,9 @@ export default {
       date: null,
       desc: null,
       value: null,
-      img: null
-    }
+      receipt: []
+    },
+    category: []
   },
   getters: {
     waitingTransactions(state) {
@@ -39,6 +40,9 @@ export default {
     },
     transaction(state) {
       return state.transaction;
+    },
+    category(state) {
+      return state.category;
     }
   },
   mutations: {
@@ -56,6 +60,9 @@ export default {
     },
     SET_TRANSACTIONS_DETAIL(state, data) {
       state.transaction = data;
+    },
+    SET_CATEGORY(state, data) {
+      state.category = data;
     }
   },
   actions: {
@@ -108,7 +115,7 @@ export default {
         date: null,
         desc: null,
         value: null,
-        img: null
+        receipt: []
       };
       await getDetailTransaction(data.idToken, data.id).then(response => {
         if (response.status === 200) {
@@ -116,24 +123,28 @@ export default {
           transaction = {
             name: data.name,
             id: data.id,
-            type: data.category.type,
+            type: data.category.name,
             state: data.lastestStatus ? data.lastestStatus.status : 0,
             date: data.lastestStatus
               ? data.lastestStatus.createTime
               : "01-01-2020",
             desc: data.description,
-            value: data.value
+            value: data.value,
+            receipt: data.listReceipt
           };
         }
       });
+      commit("SET_TRANSACTIONS_DETAIL", transaction);
+    },
 
-      await getTransactionEvidences(data.idToken, data.id).then(response => {
-        if (response.status == 200) {
-          if (response.data.length != 0) transaction.img = response.data[0].url;
+    async getTransCategory({ commit }, idToken) {
+      await getTransactionCategory(idToken).then(response => {
+        if (response.status === 200) {
+          commit("SET_CATEGORY", response.data);
+        } else {
+          commit("SET_CATEGORY", null);
         }
       });
-
-      commit("SET_TRANSACTIONS_DETAIL", transaction);
     }
   }
 };

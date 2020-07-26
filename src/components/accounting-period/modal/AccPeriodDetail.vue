@@ -78,21 +78,24 @@ export default {
   },
   methods: {
     createNewPeriods() {
-      console.log(this.user);
+      // console.log(this.user);
       let period = {
         title: this.form.title,
         startDate: this.getDateCreate(this.form.startDate),
         endDate: this.getDateCreate(this.form.endDate),
         deadline: this.getDatetimeCreate(this.form.deadline),
-        brandId: this.user.brand
+        brandId: this.getUser.brand
       };
       console.log(period);
-      createPeriod(this.user.token, period).then(response => {
-        if (response.status == 200) {
-          console.log("ahihi");
+      createPeriod(this.getUser.token, period).then(response => {
+        if (response.status == 201) {
+          EventBus.$emit("CloseAccPeriodDialog", false);
+          this.$message({
+            message: "Add thành công",
+            type: "success"
+          });
         }
       });
-      EventBus.$emit("CloseAccPeriodDialog", false);
     },
 
     updatePeriodById() {
@@ -105,7 +108,7 @@ export default {
         brandId: this.user.brand
       };
       console.log(period);
-      updatePeriod(this.user.token, this.form.id, period).then(response => {
+      updatePeriod(this.getUser.token, this.form.id, period).then(response => {
         if (response.status == 200) {
           EventBus.$emit("CloseAccPeriodDialog", false);
           this.$message({
@@ -161,12 +164,13 @@ export default {
   computed: {
     ...mapGetters("user", ["user"]),
     getUser() {
-      return this.user;
+      let user = localStorage.getItem("user");
+      return JSON.parse(user);
     }
   },
   created() {
     if (this.id != 0) {
-      getAccPeriodByID(this.user.token, this.id).then(response => {
+      getAccPeriodByID(this.getUser.token, this.id).then(response => {
         let data = response.data;
         this.form = {
           title: data.title,

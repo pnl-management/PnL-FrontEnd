@@ -1,10 +1,6 @@
 export const status = new Map([
-  [201, { name: "Cửa hàng đã tạo", color: "info" }],
-  [202, { name: "Cửa hàng đã chỉnh sửa", color: "info" }],
-  [203, { name: "Cửa hàng đã hủy", color: "danger" }],
-
-  [301, { name: "Kế toán chấp thuận", color: "success" }],
-  [302, { name: "Kế toán yêu cầu chỉnh sửa", color: "warning" }],
+  [301, { name: "Kế toán đã tạo", color: "success" }],
+  [302, { name: "Kế toán đã chỉnh sửa", color: "warning" }],
   [303, { name: "Kế toán đã hủy", color: "danger" }],
 
   [101, { name: "Chủ đầu tư chấp thuận", color: "success" }],

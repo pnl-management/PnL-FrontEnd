@@ -18,6 +18,16 @@
         </template>
       </el-menu-item>
       <el-menu-item
+        index="/main/receipt"
+        :route="{ name: 'receipt' }"
+        @click="goTo('receipt')"
+      >
+        <template slot="title">
+          <i class="el-icon-s-custom"></i>
+          <span>Hoá đơn</span>
+        </template>
+      </el-menu-item>
+      <el-menu-item
         index="/main/transaction"
         :route="{ name: 'transaction' }"
         @click="goTo('transaction')"
@@ -47,16 +57,14 @@
           <span to="/main/report">Kì kế toán</span>
         </template>
       </el-menu-item>
-      <el-menu-item index="4">
-        <template slot="title">
-          <i class="el-icon-s-custom"></i>
-          <span>Nhượng quyền</span>
-        </template>
-      </el-menu-item>
-      <el-menu-item index="5">
+      <el-menu-item
+        index="/main/store"
+        :route="{ name: 'store' }"
+        @click="goTo('store')"
+      >
         <template slot="title">
           <i class="el-icon-s-shop"></i>
-          <span>Nhà Hàng</span>
+          <span>Cửa Hàng</span>
         </template>
       </el-menu-item>
     </el-menu>

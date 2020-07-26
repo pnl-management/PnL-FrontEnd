@@ -32,23 +32,23 @@ export default {
           token: user.token,
           brand: user.participant.brand.id
         };
+        localStorage.setItem("user", JSON.stringify(currentUser));
         commit("SET_USER", currentUser);
       } else {
         commit("SET_USER", null);
       }
     },
 
-    logout({ commit }, user) {
-      if (user) {
-        let currentUser = {
-          fullname: user.fullname,
-          role: user.role,
-          username: user.username,
-          token: user.token,
-          brand: user.brand.id
-        };
-        commit("SET_USER", currentUser);
-      }
+    logout({ commit }) {
+      let currentUser = {
+        fullname: null,
+        role: null,
+        username: null,
+        token: null,
+        brand: null
+      };
+      localStorage.removeItem("user");
+      commit("SET_USER", currentUser);
     }
   }
 };
