@@ -225,7 +225,7 @@ export default {
         id: this.id,
         brandId: this.getUser.brand,
         storeId: this.store,
-        categoryId: this.category1,
+        categoryId: this.form.type,
         name: this.form.name,
         value: this.form.value,
         description: this.form.desc
