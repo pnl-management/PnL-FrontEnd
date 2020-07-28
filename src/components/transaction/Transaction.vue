@@ -91,7 +91,7 @@
 <script>
 import { mapGetters, mapActions } from "vuex";
 import { status } from "../../enum/TransactionStatusEnum";
-import { type } from "../../enum/TypeEnum";
+// import { type } from "../../enum/TypeEnum";
 import TransactionDetail from "./modal/TransactionDetail";
 import EventBus from "../../EventBus";
 import CreateTransaction from "./modal/CreateTransaction.vue";
@@ -144,7 +144,7 @@ export default {
           id: data.id,
           name: data.name,
           value: data.value,
-          type: type.get(data.category.type),
+          type: data.category.name,
           date: this.getDateCreate(data.createdTime),
           time: this.getTimeCreate(data.createdTime),
           store: data.store.name,
@@ -218,6 +218,10 @@ export default {
   mounted() {
     EventBus.$on("CloseTransactionDetailDialog", value => {
       this.dialogCreateVisible = value;
+      this.getTransactions(0);
+    });
+    EventBus.$on("CloseEditDialog", value => {
+      this.dialogVisible = value;
       this.getTransactions(0);
     });
   },

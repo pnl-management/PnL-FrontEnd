@@ -123,7 +123,7 @@ export default {
           transaction = {
             name: data.name,
             id: data.id,
-            type: data.category.name,
+            type: data.category.id,
             state: data.lastestStatus ? data.lastestStatus.status : 0,
             date: data.lastestStatus
               ? data.lastestStatus.createTime

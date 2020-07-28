@@ -24,7 +24,7 @@ export default {
     if (localStorage.getItem("user") == null) {
       this.$router.replace({ name: "login" });
     } else {
-      if (this.$router.history.current.fullPath == "")
+      if (this.$router.history.current.fullPath == "/")
         this.$router.replace({ name: "dashboard" });
     }
   }

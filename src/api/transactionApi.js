@@ -114,3 +114,29 @@ export function getTransactionCategory(idToken) {
     crossDomain: true
   });
 }
+
+export function updateTransaction(IdToken, transaction) {
+  let json = {
+    Brand: {
+      id: transaction.brandId
+    },
+    Store: {
+      id: transaction.storeId
+    },
+    Category: {
+      id: transaction.categoryId
+    },
+    name: transaction.name,
+    value: transaction.value,
+    description: transaction.description
+  };
+  return fetch(baseURL + "api/transactions/" + transaction.id, {
+    method: "PUT",
+    headers: {
+      "content-type": "application/json;charset=utf-8",
+      Accept: "application/json",
+      Authorization: "Bearer " + IdToken
+    },
+    body: JSON.stringify(json)
+  });
+}
